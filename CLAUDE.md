@@ -43,7 +43,7 @@ DESIGN.md is de single source of truth. Lees vóór UI-werk:
 
 ## Deploy-flow (alles via GitHub)
 
-Productie draait op `https://oktobus.nl`, host = VPS `77.42.82.154`, repo-pad = `/opt/oktobus` (git-clone, beheerd door GitHub Actions).
+Productie draait op `https://oktobus.nl`, host = VPS `77.42.82.154`, repo-pad = `/opt/oktobus` (git-clone, beheerd door GitHub Actions). GitHub-repo: `Oktobus-tech/oktobus` (org). Verhuisd vanaf `Davidemeer/oktobus` op 2026-05-29 — oude URL werkt nog via GitHub-redirect.
 
 **Werkwijze voor élke wijziging — code, copy, infra:**
 
@@ -71,13 +71,15 @@ Productie draait op `https://oktobus.nl`, host = VPS `77.42.82.154`, repo-pad = 
 **Wel doen:**
 - ✅ Lokaal testen met `pnpm dev` voor je een PR opent
 - ✅ `pnpm typecheck && pnpm lint` lokaal voor je commit (matcht CI)
-- ✅ Voor handmatige re-deploy zonder code-change: GitHub → Actions → "Deploy" → Run workflow, of `gh workflow run Deploy --repo Davidemeer/oktobus`
+- ✅ Voor handmatige re-deploy zonder code-change: GitHub → Actions → "Deploy" → Run workflow, of `gh workflow run Deploy --repo Oktobus-tech/oktobus`
 
 **Server-side state (alleen als het echt nodig is):**
 - Server-changes (nginx, fail2ban, Docker proxy): `/opt/proxy/` — niet in deze repo, alleen via SSH op de VPS aanpassen. Documenteer wat je doet.
 - `.env.production` op de VPS: bewerken via SSH; staat buiten git. Bij wijziging: `docker compose up -d` om door te zetten.
 - VPS-toegang: vraag Jochem om je SSH-pubkey toe te voegen aan `/root/.ssh/authorized_keys`. Voor reguliere feature-werk niet nodig.
 
-**Repo-secrets** (op `Davidemeer/oktobus`): `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` — al ingesteld, niet aan komen.
+**Deploy-config** (op `Oktobus-tech/oktobus`) — al ingesteld, niet aan komen:
+- Repo-**variables**: `DEPLOY_HOST` (`77.42.82.154`), `DEPLOY_USER` (`root`) — gebruikt als `${{ vars.* }}` in `deploy.yml`.
+- Repo-**secret**: `DEPLOY_SSH_KEY` — gebruikt als `${{ secrets.DEPLOY_SSH_KEY }}`.
 
 **Andere sites op dezelfde VPS:** `hartconstructions.nl`, `nieuwsradar.online`. Eigen repo's, eigen deploy-flows. Niet kruisen.
